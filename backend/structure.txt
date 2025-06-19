@@ -1,0 +1,99 @@
+com.darian.ecommerce
+│
+├── audit/
+│   ├── entity/
+│   ├── enums/
+│   ├── event/
+│   ├── listener/
+│   ├── AuditLogRepository.java
+│   ├── AuditLogService.java
+│   └── AuditLogServiceImpl.java
+│
+├── auth/
+│   ├── controller/
+│   │   └── AuthController.java
+│   ├── dto/
+│   ├── entity/
+│   ├── enums/
+│   ├── exception/
+│   ├── mapper/
+│   ├── repository/
+│   │   └── UserRepository.java
+│   ├── service/
+│   │   ├── UserService.java
+│   │   └── UserServiceImpl.java
+│   └── config/
+│       └── SecurityConfig.java
+│
+├── cart/
+│   ├── controller/
+│   │   └── CartController.java
+│   ├── dto/
+│   ├── entity/
+│   ├── mapper/
+│   ├── repository/
+│   │   ├── CartItemRepository.java
+│   │   └── CartRepository.java
+│   ├── service/
+│   │   ├── CartItemService.java
+│   │   ├── CartItemServiceImpl.java
+│   │   ├── CartService.java
+│   │   └── CartServiceImpl.java
+│
+├── config/
+│   └── WebConfig.java
+│
+├── order/
+│   ├── controller/
+│   │   └── OrderController.java
+│   ├── businesslogic/
+│   │   └── shippingfee/
+│   ├── dto/
+│   ├── entity/
+│   ├── enums/
+│   ├── exception/
+│   ├── mapper/
+│   ├── repository/
+│   │   └── OrderRepository.java
+│   ├── service/
+│   │   ├── OrderService.java
+│   │   └── OrderServiceImpl.java
+│
+├── payment/
+│   ├── controller/
+│   │   └── PaymentController.java
+│   ├── dto/
+│   ├── entity/
+│   ├── enums/
+│   ├── exception/
+│   ├── factory/
+│   │   └── PaymentStrategy.java
+│   ├── repository/
+│   │   └── PaymentTransactionRepository.java
+│   ├── service/
+│   │   ├── PaymentService.java
+│   │   └── PaymentServiceImpl.java
+│
+├── product/
+│   ├── controller/
+│   │   └── ProductController.java
+│   ├── businesslogic/
+│   ├── dto/
+│   ├── entity/
+│   ├── enums/
+│   ├── event/
+│   ├── mapper/
+│   ├── repository/
+│   └── service/
+│
+├── shared/                        # Các thành phần dùng chung
+│   ├── constants/
+│   ├── exception/
+│   └── utils/
+│
+├── subsystem/
+│   ├── creditcard/
+│   ├── domesticcard/
+│   └── vnpay/
+│
+└── EcommerceApplication.java      # Main entry point

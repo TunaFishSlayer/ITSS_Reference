@@ -1,0 +1,21 @@
+delivery_info_id,recipient_name,phone_number,email,province_city,address,shipping_instruction
+1,Trần Thị B,0902476305,user1@example.com,TP. Hồ Chí Minh,71 Phan Bội Châu,Giao buổi tối
+2,Nguyễn Văn A,0903252024,user2@example.com,Đà Nẵng,917 Nguyễn Trãi,Giao giờ hành chính
+3,Hoàng Văn E,0908608785,user3@example.com,Cần Thơ,442 Phan Bội Châu,Giao buổi tối
+4,Phạm Ngọc D,0909132211,user4@example.com,Hà Nội,397 Nguyễn Huệ,Giao giờ hành chính
+5,Phạm Văn D,0906985399,user5@example.com,Hải Phòng,770 Hoàng Diệu,Giao giờ hành chính
+6,Phạm Văn C,0909297120,user6@example.com,TP. Hồ Chí Minh,113 Phan Bội Châu,Giao giờ hành chính
+7,Nguyễn Văn C,0906371415,user7@example.com,Đà Nẵng,905 Nguyễn Huệ,Giao buổi tối
+8,Hoàng Văn B,0905743691,user8@example.com,Cần Thơ,365 Hoàng Diệu,Giao giờ hành chính
+9,Nguyễn Thị E,0902957827,user9@example.com,Hà Nội,141 Hoàng Diệu,Giao giờ hành chính
+10,Lê Văn D,0909436347,user10@example.com,Hải Phòng,880 Nguyễn Trãi,Giao giờ hành chính
+11,Phạm Thị B,0909347095,user11@example.com,TP. Hồ Chí Minh,696 Phan Bội Châu,Giao giờ hành chính
+12,Nguyễn Văn D,0901370625,user12@example.com,Đà Nẵng,1000 Phan Bội Châu,Giao buổi tối
+13,Nguyễn Thị C,0902645022,user13@example.com,Cần Thơ,92 Nguyễn Trãi,Giao buổi tối
+14,Trần Văn D,0903805010,user14@example.com,Hà Nội,982 Nguyễn Huệ,Giao giờ hành chính
+15,Hoàng Văn C,0907272621,user15@example.com,Hải Phòng,822 Nguyễn Huệ,Giao giờ hành chính
+16,Lê Văn A,0907287597,user16@example.com,TP. Hồ Chí Minh,862 Nguyễn Huệ,Giao giờ hành chính
+17,Lê Văn E,0908317886,user17@example.com,Đà Nẵng,648 Phan Bội Châu,Giao buổi tối
+18,Nguyễn Văn B,0908343396,user18@example.com,Cần Thơ,324 Nguyễn Huệ,Giao giờ hành chính
+19,Lê Văn B,0904290770,user19@example.com,Hà Nội,940 Hoàng Diệu,Giao buổi tối
+20,Lê Thị D,0909283041,user20@example.com,Hải Phòng,254 Nguyễn Trãi,Giao giờ hành chính

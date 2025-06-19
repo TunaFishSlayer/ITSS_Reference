@@ -1,0 +1,21 @@
+username,password,role,email,created_at
+user1,password1,customer,user1@example.com,2024-01-02 08:00:00
+user2,password2,manager,user2@example.com,2024-01-03 08:00:00
+user3,password3,customer,user3@example.com,2024-01-04 08:00:00
+user4,password4,manager,user4@example.com,2024-01-05 08:00:00
+user5,password5,customer,user5@example.com,2024-01-06 08:00:00
+user6,password6,customer,user6@example.com,2024-01-07 08:00:00
+user7,password7,manager,user7@example.com,2024-01-08 08:00:00
+user8,password8,customer,user8@example.com,2024-01-09 08:00:00
+user9,password9,customer,user9@example.com,2024-01-10 08:00:00
+user10,password10,manager,user10@example.com,2024-01-11 08:00:00
+user11,password11,manager,user11@example.com,2024-01-12 08:00:00
+user12,password12,manager,user12@example.com,2024-01-13 08:00:00
+user13,password13,manager,user13@example.com,2024-01-14 08:00:00
+user14,password14,manager,user14@example.com,2024-01-15 08:00:00
+user15,password15,customer,user15@example.com,2024-01-16 08:00:00
+user16,password16,customer,user16@example.com,2024-01-17 08:00:00
+user17,password17,manager,user17@example.com,2024-01-18 08:00:00
+user18,password18,customer,user18@example.com,2024-01-19 08:00:00
+user19,password19,manager,user19@example.com,2024-01-20 08:00:00
+user20,password20,customer,user20@example.com,2024-01-21 08:00:00

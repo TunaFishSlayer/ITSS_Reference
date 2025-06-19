@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pay Order</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+        }
+        .method {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+        .method img {
+            width: 60px;
+            margin-right: 1rem;
+        }
+        #pay-button {
+            margin-top: 1.5rem;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h2>Pay Your Order</h2>
+
+<label for="orderId">Order ID:</label>
+<input type="number" id="orderId" placeholder="Enter order ID" required>
+
+<h3>Select Payment Method:</h3>
+<div class="method">
+    <input type="radio" name="paymentMethod" value="VNPAY" id="vnpay" checked>
+    <label for="vnpay">
+        <img src="https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg" alt="VNPay"> VNPay
+    </label>
+</div>
+<div class="method">
+    <input type="radio" name="paymentMethod" value="PAYPAL" id="paypal">
+    <label for="paypal">
+        <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal"> PayPal
+    </label>
+</div>
+<div class="method">
+    <input type="radio" name="paymentMethod" value="CREDIT_CARD" id="creditcard">
+    <label for="creditcard">
+        <img src="https://img.icons8.com/color/48/000000/mastercard-logo.png" alt="Credit Card"> Credit Card
+    </label>
+</div>
+<div class="method">
+    <input type="radio" name="paymentMethod" value="DOMESTIC_CARD" id="domestic">
+    <label for="domestic">
+        <img src="https://img.icons8.com/color/48/000000/bank-card-back-side.png" alt="Domestic Card"> Domestic Card
+    </label>
+</div>
+<div class="method">
+    <input type="radio" name="paymentMethod" value="COD" id="cod">
+    <label for="cod">
+        <img src="https://png.pngtree.com/png-clipart/20210530/original/pngtree-cash-on-delivery-of-cod-icon-png-image_6364045.jpg" alt="COD"> Cash on Delivery (COD)
+    </label>
+</div>
+
+<button id="pay-button">Pay Now</button>
+
+<script>
+    document.getElementById("pay-button").addEventListener("click", async function () {
+        const orderId = document.getElementById("orderId").value;
+        const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        if (!orderId) {
+            alert("Please enter a valid Order ID.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/v1/payment/${orderId}?paymentMethod=${method}`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                redirect: "follow"
+
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                window.location.href = data.url;
+            } else {
+                const errorText = await response.text();
+                alert("Payment failed: " + errorText);
+            }
+        } catch (error) {
+            console.error("Payment error:", error);
+            alert("Payment failed: " + error);
+        }
+    });
+</script>
+</body>
+</html>

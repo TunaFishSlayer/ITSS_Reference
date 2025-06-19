@@ -1,0 +1,21 @@
+order_id,customer_id,order_status,is_rush_order,delivery_info_id,subtotal,shipping_fee,total,created_timestamp,discount,payment_status
+1,1,shipped,True,1,284.62,30.00,284.10,2023-05-28 14:49:52,30.52,pending
+2,2,shipped,False,2,145.25,15.00,144.28,2023-11-23 11:59:51,15.97,failed
+3,3,delivered,True,3,104.13,30.00,113.15,2023-01-19 07:49:21,20.98,pending
+4,4,processing,True,4,114.43,30.00,121.63,2023-01-13 22:01:03,22.80,completed
+5,5,cancelled,True,5,141.91,30.00,157.80,2023-12-26 02:26:57,14.11,completed
+6,6,shipped,True,6,136.21,30.00,144.46,2023-08-22 17:10:19,21.75,failed
+7,7,pending,True,7,119.11,30.00,119.87,2023-03-30 10:50:01,29.25,failed
+8,8,shipped,False,8,109.40,15.00,118.06,2023-03-19 19:09:38,6.34,pending
+9,9,cancelled,True,9,108.80,30.00,121.89,2023-09-07 11:55:08,16.91,failed
+10,10,delivered,True,10,124.98,30.00,142.47,2023-05-21 01:08:39,12.51,failed
+11,11,delivered,False,11,105.69,15.00,119.62,2023-12-03 01:09:39,1.07,failed
+12,12,pending,True,12,130.83,30.00,135.33,2023-11-28 08:39:30,25.50,completed
+13,13,pending,True,13,100.76,30.00,107.59,2023-12-14 13:00:24,23.17,failed
+14,14,pending,True,14,122.04,30.00,128.91,2023-10-25 13:35:12,23.13,pending
+15,15,processing,True,15,102.11,30.00,123.10,2023-08-03 03:23:02,9.01,pending
+16,16,processing,False,16,133.83,15.00,134.30,2023-01-04 10:35:26,14.53,completed
+17,17,processing,True,17,100.21,30.00,123.70,2023-10-24 07:10:25,6.51,pending
+18,18,delivered,False,18,119.49,15.00,132.04,2023-03-30 12:39:29,2.45,completed
+19,19,processing,True,19,142.27,30.00,151.48,2023-02-08 02:47:50,20.79,pending
+20,20,pending,True,20,107.44,30.00,124.77,2023-02-27 07:12:13,12.67,completed

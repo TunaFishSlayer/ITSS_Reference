@@ -1,0 +1,51 @@
+product_id,category_id,product_name,product_price,product_value,product_barcode,product_description,product_specification,stock_quantity,warehouse_entry_timestamp
+1,1,T-Shirt Unisex,199.99,120.00,FA001,Basic cotton T-shirt,"Size: M, Color: Black",100,2025-04-15 10:00:00
+2,1,Jeans Slim Fit,499.99,320.00,FA002,Stylish slim fit jeans,"Size: 32, Color: Blue",50,2025-04-15 10:00:00
+3,1,Hoodie Oversize,699.00,400.00,FA003,Warm fleece hoodie,"Size: L, Color: Gray",60,2025-04-15 10:00:00
+4,1,Sneakers Classic,899.50,500.00,FA004,Classic white sneakers,Size: 42,70,2025-04-15 10:00:00
+5,1,Baseball Cap,149.00,80.00,FA005,Adjustable cap,Color: Navy,120,2025-04-15 10:00:00
+6,1,Leather Belt,299.00,200.00,FA006,Genuine leather belt,Length: 110cm,80,2025-04-15 10:00:00
+7,1,Winter Jacket,1299.99,800.00,FA007,Insulated winter jacket,"Size: XL, Color: Black",40,2025-04-15 10:00:00
+8,1,Formal Shirt,399.00,250.00,FA008,Long sleeve shirt,"Size: L, Color: White",55,2025-04-15 10:00:00
+9,1,Casual Shorts,249.00,150.00,FA009,Cotton casual shorts,"Size: M, Color: Khaki",90,2025-04-15 10:00:00
+10,1,Socks 5-pack,99.00,50.00,FA010,Pack of 5 socks,"Size: Free, Color: Mixed",200,2025-04-15 10:00:00
+11,2,Smart TV 55inch,12000.00,8500.00,HA001,4K UHD Smart TV,"Brand: Sony, Model: X85J",20,2025-04-15 10:00:00
+12,2,Refrigerator 2-Door,8900.00,6000.00,HA002,Inverter refrigerator,"Brand: LG, Capacity: 300L",15,2025-04-15 10:00:00
+13,2,Washing Machine,7400.00,5000.00,HA003,Front-load washer,"Brand: Samsung, 8kg",10,2025-04-15 10:00:00
+14,2,Microwave Oven,1500.00,1100.00,HA004,Digital microwave,Power: 1000W,25,2025-04-15 10:00:00
+15,2,Air Conditioner,9900.00,7000.00,HA005,Split type AC,"1.5HP, Inverter",8,2025-04-15 10:00:00
+16,2,Induction Cooktop,2300.00,1800.00,HA006,2-burner induction stove,Touch control,30,2025-04-15 10:00:00
+17,2,Rice Cooker,850.00,600.00,HA007,Electric rice cooker,"1.8L, Keep warm",35,2025-04-15 10:00:00
+18,2,Blender,450.00,350.00,HA008,Glass jar blender,600W,40,2025-04-15 10:00:00
+19,2,Electric Kettle,350.00,250.00,HA009,Stainless steel kettle,"1.5L, Auto-off",60,2025-04-15 10:00:00
+20,2,Vacuum Cleaner,2100.00,1600.00,HA010,Bagless vacuum,"2000W, HEPA filter",22,2025-04-15 10:00:00
+21,3,Smartphone A10,6500.00,5200.00,EL001,Entry-level smartphone,"RAM: 4GB, ROM: 64GB",45,2025-04-15 10:00:00
+22,3,Laptop X1 Carbon,29000.00,23000.00,EL002,Business ultrabook,"CPU: i7, RAM: 16GB",18,2025-04-15 10:00:00
+23,3,Tablet Pro 11,17000.00,15000.00,EL003,11-inch tablet,"WiFi + LTE, 128GB",20,2025-04-15 10:00:00
+24,3,Wireless Earbuds,1500.00,1200.00,EL004,Noise canceling earbuds,Bluetooth 5.2,100,2025-04-15 10:00:00
+25,3,Bluetooth Speaker,2200.00,1800.00,EL005,Portable speaker,"Waterproof, 12h playtime",40,2025-04-15 10:00:00
+26,3,Smartwatch V2,3800.00,3000.00,EL006,Fitness tracker watch,Heart-rate + GPS,30,2025-04-15 10:00:00
+27,3,Monitor 24inch,4200.00,3500.00,EL007,Full HD monitor,"IPS, 75Hz",25,2025-04-15 10:00:00
+28,3,Gaming Mouse,650.00,550.00,EL008,RGB gaming mouse,DPI: 16000,75,2025-04-15 10:00:00
+29,3,Mechanical Keyboard,1700.00,1400.00,EL009,Tactile keyboard,Blue switches,40,2025-04-15 10:00:00
+30,3,External SSD 500GB,2800.00,2200.00,EL010,Portable SSD,"USB-C, NVMe",35,2025-04-15 10:00:00
+31,4,Building Blocks Set,850.00,600.00,TO001,Creative blocks set,300 pcs,60,2025-04-15 10:00:00
+32,4,Remote Car Toy,1300.00,900.00,TO002,RC car with battery,1:16 scale,40,2025-04-15 10:00:00
+33,4,Doll House,2100.00,1500.00,TO003,Miniature doll house,"Wooden, DIY",30,2025-04-15 10:00:00
+34,4,Puzzle 1000 pieces,450.00,300.00,TO004,Nature-themed puzzle,1000 pieces,80,2025-04-15 10:00:00
+35,4,Board Game Classic,990.00,800.00,TO005,Classic board game set,4-in-1,50,2025-04-15 10:00:00
+36,4,Stuffed Animal Bear,390.00,250.00,TO006,Soft teddy bear,40cm tall,90,2025-04-15 10:00:00
+37,4,Toy Train Set,1400.00,1100.00,TO007,Track + engine + cars,Battery operated,35,2025-04-15 10:00:00
+38,4,Yo-Yo Light Up,120.00,80.00,TO008,LED light yo-yo,Plastic body,120,2025-04-15 10:00:00
+39,4,Action Figure Hero,850.00,600.00,TO009,Superhero action toy,Articulated joints,45,2025-04-15 10:00:00
+40,4,Magic Cube,150.00,100.00,TO010,3x3x3 puzzle cube,Speed cube,100,2025-04-15 10:00:00
+41,5,Instant Noodles Box,120.00,100.00,FO001,Box of 30 packs,Spicy shrimp flavor,80,2025-04-15 10:00:00
+42,5,Canned Tuna 4-pack,240.00,200.00,FO002,Tuna in sunflower oil,4 x 185g,65,2025-04-15 10:00:00
+43,5,Chocolate Cookies,180.00,150.00,FO003,Choco chip cookies,400g box,90,2025-04-15 10:00:00
+44,5,Green Tea Pack,130.00,110.00,FO004,Loose green tea,100g pack,70,2025-04-15 10:00:00
+45,5,Cereal Mix,290.00,240.00,FO005,Multigrain cereal,500g,60,2025-04-15 10:00:00
+46,5,Bottled Water 1.5L x12,960.00,720.00,FO006,12-pack bottled water,1.5L per bottle,100,2025-04-15 10:00:00
+47,5,Fruit Jam Set,350.00,280.00,FO007,4 flavors of jam,"Strawberry, Mango...",45,2025-04-15 10:00:00
+48,5,Canned Soup,190.00,150.00,FO008,Tomato soup,400g can,80,2025-04-15 10:00:00
+49,5,Energy Drink Pack,540.00,400.00,FO009,6-pack energy drinks,250ml each,60,2025-04-15 10:00:00
+50,5,Organic Rice Bag,780.00,620.00,FO010,Jasmine rice 5kg,Certified organic,50,2025-04-15 10:00:00

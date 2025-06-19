@@ -1,0 +1,8 @@
+review_id,product_id,user_id,rating,review_comment,review_timestamp
+1,18,1,5,"Excellent product! Variety snacks - 10 types, assorted flavors",2025-04-15 12:25:25
+2,9,1,1,"Not satisfied. Energy efficient - 300L, inverter motor",2025-04-15 12:25:25
+3,12,3,5,"Excellent product! Latest features - 6.5 inch, 128GB storage",2025-04-15 12:25:25
+4,7,3,3,"Average quality. Miniature race car - 1:64 scale, die-cast",2025-04-15 12:25:25
+5,3,4,3,"Average quality. Durable and easy to use - 1.8L capacity, 700W",2025-04-15 12:25:25
+6,20,5,1,"Not satisfied. Rich and creamy - Dark 70%, 100g bar",2025-04-15 12:25:25
+7,6,5,3,"Average quality. Fun interactive toy - Rechargeable battery, LED eyes",2025-04-15 12:25:25
