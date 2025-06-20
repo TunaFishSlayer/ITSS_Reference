@@ -5,18 +5,20 @@ import com.darian.ecommerce.order.exception.OrderNotFoundException;
 import com.darian.ecommerce.order.entity.Order;
 import com.darian.ecommerce.order.enums.OrderStatus;
 import com.darian.ecommerce.payment.enums.PaymentStatus;
+import com.darian.ecommerce.order.dto.BaseOrderDTO;
 import com.darian.ecommerce.order.dto.DeliveryInfoDTO;
 import com.darian.ecommerce.order.dto.InvoiceDTO;
 import com.darian.ecommerce.order.dto.OrderDTO;
 import com.darian.ecommerce.order.dto.RushOrderDTO;
-
+import com.darian.ecommerce.order.dto.RushOrderDeliveryInfoDTO;
+import com.darian.ecommerce.order.dto.SplitOrderDTO;
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
     OrderDTO createOrder(CartDTO cartDTO);
 
-    OrderDTO getOrderDetails(Long orderId) throws OrderNotFoundException;
+    BaseOrderDTO getOrderDetails(Long orderId) throws OrderNotFoundException;
 
     InvoiceDTO getInvoice(Long orderId) throws OrderNotFoundException;
 
@@ -26,11 +28,17 @@ public interface OrderService {
 
     OrderDTO setDeliveryInfo(Long orderId, DeliveryInfoDTO deliveryInfoDTO) throws OrderNotFoundException;
 
+    RushOrderDTO setRushDeliveryInfo(Long orderId, RushOrderDeliveryInfoDTO rushOrderDeliveryInfoDTO) throws OrderNotFoundException;
+
     void setPending(Long orderId);
 
-    OrderDTO placeOrder(OrderDTO orderDTO);
+    void setConfirmed(Long orderId);
 
-    RushOrderDTO placeRushOrder(RushOrderDTO rushOrderDTO);
+    void setRejected(Long orderId);
+
+    SplitOrderDTO placeOrder(OrderDTO orderDTO);
+
+    //RushOrderDTO placeRushOrder(RushOrderDTO rushOrderDTO);
 
     void cancelOrder(Long orderId) throws OrderNotFoundException;
 
@@ -38,15 +46,18 @@ public interface OrderService {
 
     void updateOrderStatus(Long orderId, OrderStatus orderStatus);
 
-    Boolean isRushOrder(Long orderId);
+    //Boolean isRushOrder(Long orderId);
 
     Boolean checkAvailability(CartDTO cartDTO);
 
     Boolean validateDeliveryInfo(DeliveryInfoDTO deliveryInfoDTO);
 
-    Boolean checkRushDeliveryAddress(String address);
+    //Boolean checkRushDeliveryAddress(String address);
 
     Boolean checkCancellationValidity(Long orderId);
 
-    Boolean checkRushProductEligibility(Long productId);
+
+    List<BaseOrderDTO> getOrdersbyStatus(OrderStatus status);
+
+    Boolean isRushDeliverySupported(BaseOrderDTO BaseOrderDTO);
 }

@@ -5,18 +5,23 @@ import com.darian.ecommerce.auth.UserService;
 import com.darian.ecommerce.auth.entity.User;
 import com.darian.ecommerce.order.mapper.DeliveryInfoMapper;
 import com.darian.ecommerce.order.mapper.OrderMapper;
+import com.darian.ecommerce.order.businesslogic.ordersplitter.OrderSplitter;
 import com.darian.ecommerce.order.businesslogic.shippingfee.ShippingFeeCalculatorFactory;
 import com.darian.ecommerce.cart.CartService;
 import com.darian.ecommerce.cart.dto.CartDTO;
+import com.darian.ecommerce.order.dto.RushOrderDeliveryInfoDTO;
 import com.darian.ecommerce.order.exception.OrderNotFoundException;
 import com.darian.ecommerce.audit.enums.ActionType;
 import com.darian.ecommerce.order.enums.OrderStatus;
 import com.darian.ecommerce.payment.enums.PaymentStatus;
 import com.darian.ecommerce.auth.enums.UserRole;
+import com.darian.ecommerce.order.entity.DeliveryInfo;
+import com.darian.ecommerce.order.dto.BaseOrderDTO;
 import com.darian.ecommerce.order.dto.DeliveryInfoDTO;
 import com.darian.ecommerce.order.dto.InvoiceDTO;
 import com.darian.ecommerce.order.dto.OrderDTO;
 import com.darian.ecommerce.order.dto.RushOrderDTO;
+import com.darian.ecommerce.order.dto.SplitOrderDTO;
 import com.darian.ecommerce.order.entity.Order;
 import com.darian.ecommerce.shared.constants.ErrorMessages;
 import com.darian.ecommerce.shared.constants.LoggerMessages;
@@ -40,14 +45,15 @@ public class OrderServiceImpl implements OrderService {
     private final AuditLogService auditLogService;
     private final OrderMapper orderMapper;
     private final DeliveryInfoMapper deliveryInfoMapper;
-
+    private final OrderSplitter orderSplitter;
     public OrderServiceImpl(OrderRepository orderRepository,
                           ShippingFeeCalculatorFactory calculatorFactory,
                           CartService cartService,
                           UserService userService,
                           AuditLogService auditLogService,
                           OrderMapper orderMapper,
-                          DeliveryInfoMapper deliveryInfoMapper) {
+                          DeliveryInfoMapper deliveryInfoMapper,
+                          com.darian.ecommerce.order.businesslogic.ordersplitter.OrderSplitter orderSplitter) {
         this.orderRepository = orderRepository;
         this.calculatorFactory = calculatorFactory;
         this.cartService = cartService;
@@ -55,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
         this.auditLogService = auditLogService;
         this.orderMapper = orderMapper;
         this.deliveryInfoMapper = deliveryInfoMapper;
+        this.orderSplitter = orderSplitter;
     }
 
     @Override
@@ -63,7 +70,6 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalStateException(String.format(ErrorMessages.VALIDATION_FAILED, "cart items not available"));
         }
         Order order = new Order();
-//        order.setOrderId("ORD-" + System.currentTimeMillis());
         // need more checking + innovate cart service
         User user = userService.getUserById(cartDTO.getUserId());
         order.setUser(user);
@@ -79,18 +85,55 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO placeOrder(OrderDTO orderDTO) {
-        Order order = orderMapper.toEntity(orderDTO, false);
-        order.setShippingFee(calculatorFactory.getCalculator(orderDTO).calculateShippingFee(orderDTO));
-        order.setOrderStatus(OrderStatus.PENDING);
-        Order savedOrder = orderRepository.save(order);
-        
-        logger.info(LoggerMessages.ORDER_CREATED, savedOrder.getOrderId());
-        auditLogService.logOrderAction(order.getUser().getId(), order.getOrderId(), UserRole.CUSTOMER, ActionType.PLACE_ORDER);
-        return orderMapper.toOrderDTO(savedOrder);
+    public SplitOrderDTO placeOrder(OrderDTO orderDTO) {
+        if (orderDTO == null || orderDTO.getItems() == null || orderDTO.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Cart is empty or not provided.");
+        }
+
+        if (!validateDeliveryInfo(orderDTO.getDeliveryInfo())) {
+            throw new IllegalArgumentException("Invalid or incomplete delivery information.");
+        }
+
+        SplitOrderDTO splitResult = orderSplitter.splitOrder(orderDTO);
+
+        RushOrderDTO rushOrderResult = null;
+        BaseOrderDTO standardOrderResult = null;
+
+        if (splitResult.rushOrder() != null) {
+            RushOrderDTO rushOrderDTO = splitResult.rushOrder();
+
+            if (!isRushDeliverySupported(rushOrderDTO)) {
+                throw new IllegalStateException("Rush delivery not supported for this address or products.");
+            }
+
+            Order rushOrder = orderMapper.toEntity(rushOrderDTO, true);
+            rushOrder.setShippingFee(calculatorFactory.getCalculator(rushOrderDTO).calculateShippingFee(rushOrderDTO));
+            rushOrder.setOrderStatus(OrderStatus.PENDING);
+            Order savedRushOrder = orderRepository.save(rushOrder);
+
+            logger.info(LoggerMessages.ORDER_CREATED, savedRushOrder.getOrderId());
+            auditLogService.logOrderAction(savedRushOrder.getUser().getId(), savedRushOrder.getOrderId(), UserRole.CUSTOMER, ActionType.PLACE_ORDER);
+
+            rushOrderResult = orderMapper.toRushOrderDTO(savedRushOrder);
+        }
+
+        if (splitResult.standardOrder() != null) {
+            BaseOrderDTO standardOrderDTO = splitResult.standardOrder();
+            Order standardOrder = orderMapper.toEntity(standardOrderDTO, false);
+            standardOrder.setShippingFee(calculatorFactory.getCalculator(standardOrderDTO).calculateShippingFee(standardOrderDTO));
+            standardOrder.setOrderStatus(OrderStatus.PENDING);
+            Order savedStandardOrder = orderRepository.save(standardOrder);
+
+            logger.info(LoggerMessages.ORDER_CREATED, savedStandardOrder.getOrderId());
+            auditLogService.logOrderAction(savedStandardOrder.getUser().getId(), savedStandardOrder.getOrderId(), UserRole.CUSTOMER, ActionType.PLACE_ORDER);
+
+            standardOrderResult = orderMapper.toBaseOrderDTO(savedStandardOrder);
+        }
+
+        return new SplitOrderDTO(rushOrderResult, standardOrderResult);
     }
 
-    @Override
+    /*@Override
     public RushOrderDTO placeRushOrder(RushOrderDTO rushOrderDTO) {
         //cần xem lại logic của checkRushProductEligibility vì nó check từng item trong order chứ have to  check userId
         if (!checkRushProductEligibility(rushOrderDTO.getOrderId()) ||
@@ -106,18 +149,11 @@ public class OrderServiceImpl implements OrderService {
         logger.info(LoggerMessages.ORDER_CREATED, savedOrder.getOrderId());
         auditLogService.logOrderAction(order.getUser().getId(), order.getOrderId(), UserRole.CUSTOMER, ActionType.PLACE_ORDER);
         return orderMapper.toRushOrderDTO(savedOrder, rushOrderDTO.getRushDeliveryTime());
-    }
-
-    @Override
-    public OrderDTO getOrderDetails(Long orderId) throws OrderNotFoundException {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
-        return orderMapper.toOrderDTO(order);
-    }
+    }*/
 
     @Override
     public InvoiceDTO getInvoice(Long orderId) throws OrderNotFoundException {
-        Order order = orderRepository.findById(orderId)
+        Order order = findOrderById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
         InvoiceDTO invoice = new InvoiceDTO();
         invoice.setOrderId(orderId);
@@ -128,17 +164,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(Long orderId) throws OrderNotFoundException {
-        Order order = orderRepository.findById(orderId)
+        Order order = findOrderById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
-                
+
         if (order.getOrderStatus() == OrderStatus.CANCELLED) {
             throw new IllegalStateException(String.format(ErrorMessages.ORDER_ALREADY_CANCELLED, orderId));
         }
-        
+
         if (!checkCancellationValidity(orderId)) {
             throw new IllegalStateException(String.format(ErrorMessages.ORDER_CANNOT_BE_MODIFIED, orderId));
         }
-        
+
         order.setOrderStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
         logger.info(LoggerMessages.ORDER_STATUS_CHANGED, order.getOrderStatus(), OrderStatus.CANCELLED, orderId);
@@ -147,10 +183,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Boolean validateDeliveryInfo(DeliveryInfoDTO deliveryInfoDTO) {
-        //TODO: need more conditions here
-        // return deliveryInfoDTO.getRecipientName() != null && !deliveryInfoDTO.getRecipientName().isBlank() &&
-        //         deliveryInfoDTO.getAddress() != null && !deliveryInfoDTO.getAddress().isBlank();
-        return true;
+        return deliveryInfoDTO != null
+            && deliveryInfoDTO.getRecipientName() != null
+            && !deliveryInfoDTO.getRecipientName().isBlank()
+            && deliveryInfoDTO.getAddress() != null
+            && !deliveryInfoDTO.getAddress().isBlank()
+            && deliveryInfoDTO.getProvinceCity() != null
+            && !deliveryInfoDTO.getProvinceCity().isBlank();
     }
 
     @Override
@@ -158,18 +197,31 @@ public class OrderServiceImpl implements OrderService {
         if (!validateDeliveryInfo(deliveryInfoDTO)) {
             throw new IllegalArgumentException("Invalid delivery info");
         }
+        DeliveryInfo deliveryInfo = deliveryInfoMapper.toEntity(deliveryInfoDTO);
+        orderRepository.updateDeliveryInfo(orderId, deliveryInfo);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        order.setDeliveryInfo(deliveryInfoMapper.toEntity(deliveryInfoDTO));
-        Order savedOrder = orderRepository.save(order);
-        return orderMapper.toOrderDTO(savedOrder);
+        return orderMapper.toOrderDTO(order);
     }
 
     @Override
-    public Boolean isRushOrder(Long orderId) {
-        return orderRepository.findById(orderId)
-                .map(order -> "RUSH_PLACED".equals(order.getOrderStatus()))
-                .orElse(false);
+    public RushOrderDTO setRushDeliveryInfo(Long orderId, RushOrderDeliveryInfoDTO rushOrderUpdateDTO) {
+        Order order = findOrderById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
+
+        if (!Boolean.TRUE.equals(order.getIsRushOrder())) {
+            throw new IllegalStateException("Order is not a rush order.");
+        }
+
+        // Update rush delivery time and instructions
+        if (order.getDeliveryInfo() != null) {
+            order.getDeliveryInfo().setDeliveryInstructions(rushOrderUpdateDTO.getDeliveryInstruction());
+            orderRepository.updateDeliveryInfo(orderId, order.getDeliveryInfo());
+        }
+        order.setRushDeliveryTime(rushOrderUpdateDTO.getRushDeliveryTime());
+        Order savedOrder = orderRepository.save(order);
+
+        return orderMapper.toRushOrderDTO(savedOrder);
     }
 
     @Override
@@ -182,25 +234,61 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.updateOrderStatus(orderId, OrderStatus.PENDING);
     }
 
-    @Override
+    public void setRejected(Long orderId) {
+        orderRepository.updateOrderStatus(orderId, OrderStatus.REJECTED);
+    }
+
+    public void setConfirmed(Long orderId) {
+        orderRepository.updateOrderStatus(orderId, OrderStatus.CONFIRMED);
+    }
+
+    /*@Override
     public Boolean checkRushDeliveryAddress(String address) {
-        return true; // TODO: Implement address validation logic
+        return true; 
+    } */
+
+    public List<BaseOrderDTO> getOrdersbyStatus(OrderStatus status) {
+    return orderRepository.findAll().stream()
+            .filter(order -> status == null || order.getOrderStatus() == status)
+            .map(order -> {
+                if (Boolean.TRUE.equals(order.getIsRushOrder())) {
+                    return orderMapper.toRushOrderDTO(order);
+                } else {
+                    return orderMapper.toBaseOrderDTO(order);
+                }
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
     public Boolean checkCancellationValidity(Long orderId) {
-        return true; // TODO: Implement cancellation validation logic
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
+        return order.getOrderStatus() == OrderStatus.PENDING;
     }
 
     @Override
-    public Boolean checkRushProductEligibility(Long productId) {
-        // return cartService.checkRushEligibility(userId); // Delegate to CartService
-        return true; // TODO: Implement rush eligibility check
+    public Boolean isRushDeliverySupported(BaseOrderDTO baseOrderDTO) {
+        // Check if address is in Hanoi inner city and all products are rush eligible
+        return baseOrderDTO.getDeliveryInfo().getProvinceCity().equalsIgnoreCase("hanoi")
+            && baseOrderDTO.getItems().stream().allMatch(item -> item.isRushEligible());
     }
 
     @Override
-    public Optional<Order> findOrderById(Long orderId) {
+    public Optional<Order> findOrderById(Long orderId){
         return orderRepository.findById(orderId);
+    }
+
+    @Override
+    public BaseOrderDTO getOrderDetails(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException(String.format(ErrorMessages.ORDER_NOT_FOUND, orderId)));
+
+        if (Boolean.TRUE.equals(order.getIsRushOrder())) {
+            return orderMapper.toRushOrderDTO(order); 
+        } else {
+            return orderMapper.toBaseOrderDTO(order);
+        }
     }
 
     @Override
