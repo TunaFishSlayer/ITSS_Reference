@@ -12,4 +12,6 @@ public class OrderItemDTO {
     private Integer quantity;
     private Float unitPrice;
     private Float lineTotal;
+    private Float lineWeight;
+    private boolean isRushEligible; 
 }

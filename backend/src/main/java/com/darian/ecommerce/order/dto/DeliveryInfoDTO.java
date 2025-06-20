@@ -13,5 +13,5 @@ public class DeliveryInfoDTO {
     private String email;
     private String provinceCity;
     private String address;
-    private String shippingInstructions;
+    private String deliveryInstructions;
 }

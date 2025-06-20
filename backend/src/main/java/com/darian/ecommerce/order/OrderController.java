@@ -1,9 +1,9 @@
 package com.darian.ecommerce.order;
 
+import com.darian.ecommerce.cart.dto.CartDTO;
+import com.darian.ecommerce.order.dto.*;
+import com.darian.ecommerce.order.enums.OrderStatus;
 import com.darian.ecommerce.order.exception.OrderNotFoundException;
-import com.darian.ecommerce.order.dto.DeliveryInfoDTO;
-import com.darian.ecommerce.order.dto.InvoiceDTO;
-import com.darian.ecommerce.order.dto.OrderDTO;
 import com.darian.ecommerce.shared.constants.ApiEndpoints;
 import com.darian.ecommerce.shared.constants.LoggerMessages;
 import org.slf4j.Logger;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiEndpoints.ORDERS)
@@ -24,17 +25,19 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-//    @PostMapping("/place")
-//    public ResponseEntity<OrderDTO> placeOrder(@RequestBody OrderDTO orderDTO) {
-//        OrderDTO result = orderService.placeOrder(orderDTO);
-//        return ResponseEntity.ok(result);
-//    }
-//
-//    @PostMapping("/place-rush")
-//    public ResponseEntity<RushOrderDTO> placeRushOrder(@RequestBody RushOrderDTO rushOrderDTO) {
-//        RushOrderDTO result = orderService.placeRushOrder(rushOrderDTO);
-//        return ResponseEntity.ok(result);
-//    }
+    @PostMapping
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody CartDTO cartDTO) {
+        OrderDTO result = orderService.createOrder(cartDTO);
+        log.info(LoggerMessages.ORDER_CREATED, result.getOrderId());
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/place")
+    public ResponseEntity<SplitOrderDTO> placeOrder(@RequestBody OrderDTO orderDTO) {
+        SplitOrderDTO result = orderService.placeOrder(orderDTO);
+        log.info(LoggerMessages.ORDER_CREATED, result);
+        return ResponseEntity.ok(result);
+    }
 
     @PostMapping(ApiEndpoints.ORDER_CANCEL)
     public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) throws OrderNotFoundException {
@@ -44,15 +47,24 @@ public class OrderController {
     }
 
     @GetMapping(ApiEndpoints.ORDER_BY_ID)
-    public ResponseEntity<OrderDTO> getOrderDetails(@PathVariable Long orderId) throws OrderNotFoundException {
-        OrderDTO result = orderService.getOrderDetails(orderId);
+    public ResponseEntity<BaseOrderDTO> getOrderDetails(@PathVariable Long orderId) throws OrderNotFoundException {
+        BaseOrderDTO result = orderService.getOrderDetails(orderId);
         log.info(LoggerMessages.ORDER_UPDATED, orderId);
         return ResponseEntity.ok(result);
     }
 
+    @PutMapping(ApiEndpoints.ORDER_RUSH_DELIVERY)
+    public ResponseEntity<RushOrderDTO> setRushDeliveryInfo(@PathVariable Long orderId,
+                                                            @RequestBody RushOrderDeliveryInfoDTO rushOrderDeliveryInfoDTO) throws OrderNotFoundException {
+        RushOrderDTO result = orderService.setRushDeliveryInfo(orderId, rushOrderDeliveryInfoDTO);
+        log.info(LoggerMessages.ORDER_UPDATED, orderId);
+        return ResponseEntity.ok(result);
+    }
+
+
     @PutMapping(ApiEndpoints.ORDER_DELIVERY)
     public ResponseEntity<OrderDTO> setDeliveryInfo(@PathVariable Long orderId,
-                                                  @RequestBody DeliveryInfoDTO deliveryInfoDTO) throws OrderNotFoundException {
+                                                    @RequestBody DeliveryInfoDTO deliveryInfoDTO) throws OrderNotFoundException {
         OrderDTO result = orderService.setDeliveryInfo(orderId, deliveryInfoDTO);
         log.info(LoggerMessages.ORDER_UPDATED, orderId);
         return ResponseEntity.ok(result);
@@ -71,4 +83,28 @@ public class OrderController {
         return ResponseEntity.ok("Payment initiated for order: " + orderId);
     }
 
+    @GetMapping
+    public ResponseEntity<List<BaseOrderDTO>> getAllOrders(@RequestParam(required = false) OrderStatus status) {
+        List<BaseOrderDTO> orders = orderService.getOrdersbyStatus(status);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/history/{customerId}")
+    public ResponseEntity<List<OrderDTO>> getOrderHistory(@PathVariable Integer customerId) {
+        List<OrderDTO> history = orderService.getOrderHistory(customerId);
+        return ResponseEntity.ok(history);
+    }
+
+
+    @PostMapping("/{orderId}/confirm")
+    public ResponseEntity<Void> confirmOrder(@PathVariable Long orderId) {
+        orderService.setConfirmed(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{orderId}/reject")
+    public ResponseEntity<Void> rejectOrder(@PathVariable Long orderId) {
+        orderService.setRejected(orderId);
+        return ResponseEntity.noContent().build();
+    }
 }

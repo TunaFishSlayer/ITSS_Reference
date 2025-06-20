@@ -1,5 +1,6 @@
 package com.darian.ecommerce.order;
 
+import com.darian.ecommerce.order.entity.DeliveryInfo;
 import com.darian.ecommerce.order.entity.Order;
 import com.darian.ecommerce.order.enums.OrderStatus;
 import com.darian.ecommerce.payment.enums.PaymentStatus;
@@ -7,24 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    // Find order by ID
-    Optional<Order> findById(Long orderId);
 
     // Find orders by status
     List<Order> findByOrderStatus(OrderStatus status);
 
     // Find orders by customer ID
     List<Order> findByUser_Id(Integer customerId);
-
-    // Save an order (returns Order, but UML specifies Integer, adjusted to entity)
-    Order save(Order order);
-
-    // Delete an order by ID
-    void deleteById(Long orderId);
 
     // Update order status
     default void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
@@ -46,6 +38,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     default void updateShippingFee(Long orderId, Float fees) {
         findById(orderId).ifPresent(order -> {
             order.setShippingFee(fees);
+            save(order);
+        });
+    }
+
+    default void updateDeliveryInfo(Long orderId, DeliveryInfo deliveryInfo) {
+        findById(orderId).ifPresent(order -> {
+            order.setDeliveryInfo(deliveryInfo);
             save(order);
         });
     }
