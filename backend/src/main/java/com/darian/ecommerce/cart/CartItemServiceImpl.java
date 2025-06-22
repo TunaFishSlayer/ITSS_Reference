@@ -4,8 +4,10 @@ import com.darian.ecommerce.cart.mapper.CartItemMapper;
 import com.darian.ecommerce.cart.dto.CartItemDTO;
 import com.darian.ecommerce.cart.entity.Cart;
 import com.darian.ecommerce.cart.entity.CartItem;
+import com.darian.ecommerce.cart.id.CartItemId;
 import com.darian.ecommerce.product.entity.Product;
 import com.darian.ecommerce.product.service.ProductService;
+import com.darian.ecommerce.shared.constants.Constants;
 import com.darian.ecommerce.shared.constants.ErrorMessages;
 import com.darian.ecommerce.shared.constants.LoggerMessages;
 import org.slf4j.Logger;
@@ -43,33 +45,70 @@ public class CartItemServiceImpl implements CartItemService {
     public CartItemDTO addToCart(Integer userId, Long productId, Integer quantity) {
         log.info(LoggerMessages.CART_ADD_PRODUCT, userId, productId, quantity);
 
+        // Validate input parameters
+        if (userId == null || productId == null || quantity == null) {
+            throw new IllegalArgumentException("User ID, Product ID, and Quantity are required");
+        }
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+
+        if (quantity > Constants.MAX_ITEM_QUANTITY) {
+            throw new IllegalArgumentException(String.format("Quantity cannot exceed %d", Constants.MAX_ITEM_QUANTITY));
+        }
+
         // Get or create cart for user
         Cart cart = cartService.getOrCreateCart(userId);
+
+        // Check if cart already has maximum items
+        if (cart.getTotalItems() >= Constants.MAX_CART_ITEMS) {
+            throw new IllegalArgumentException(String.format("Cart cannot have more than %d items", Constants.MAX_CART_ITEMS));
+        }
 
         // Get product
         Product product = productService.getProductById(productId);
 
-        if (!productService.checkProductQuantity(productId, quantity ) ) {
+        // Check product availability and stock
+        if (!productService.checkProductQuantity(productId, quantity)) {
             log.warn(LoggerMessages.CART_PRODUCT_NOT_AVAILABLE, productId, userId);
             throw new IllegalArgumentException(String.format(ErrorMessages.PRODUCT_NOT_AVAILABLE, productId));
         }
 
+        // Check if item already exists in cart
         CartItem cartItem;
-        //TODO: có cần phải khai báo body của hàm find ko hay chỉ cần find by là được ?
         try {
-            cartItem = getCartItem(cart,product);
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
-            log.info(LoggerMessages.CART_UPDATE_QUANTITY, productId, cartItem.getQuantity(), userId);
-        }
-        catch (IllegalArgumentException e){
-            cartItem = new CartItem();
-            cartItem.setProduct(product);
-            cartItem.setQuantity(quantity);
-            cartItem.setCart(cart);
-        }
-        cartItemRepository.save(cartItem);
+            cartItem = getCartItem(cart, product);
+            // Item exists, update quantity
+            int newQuantity = cartItem.getQuantity() + quantity;
 
-        //TODO: có cần phải update cartItem ở trong cart trong db ko , bên dưới là thêm mới vào cart thì ko nói rồi, cái này là lấy giá trị cartItem ra rồi update cái đó thì phải update lại vào cart chứ nhỉ ?
+            // Check if new quantity exceeds maximum
+            if (newQuantity > Constants.MAX_ITEM_QUANTITY) {
+                throw new IllegalArgumentException(String.format("Total quantity cannot exceed %d", Constants.MAX_ITEM_QUANTITY));
+            }
+
+            cartItem.setQuantity(newQuantity);
+            log.info("Updated quantity for product {} to {} in cart for user {}", productId, newQuantity, userId);
+        } catch (IllegalArgumentException e) {
+            // Item doesn't exist, create new cart item
+            CartItemId cartItemId = new CartItemId(cart.getId(), productId);
+            cartItem = CartItem.builder()
+                    .id(cartItemId)
+                    .cart(cart)
+                    .product(product)
+                    .quantity(quantity)
+                    .productPrice(product.getPrice())
+                    .build();
+
+            log.info("Added new product {} with quantity {} to cart for user {}", productId, quantity, userId);
+        }
+
+        // Save cart item
+        cartItem = cartItemRepository.save(cartItem);
+
+        // Update cart total and save cart
+        cart.updateTotal();
+        cartService.save(cart);
 
         return cartItemMapper.toDTO(cartItem);
     }
@@ -79,22 +118,38 @@ public class CartItemServiceImpl implements CartItemService {
     @Transactional
     public CartItemDTO updateQuantity(Integer userId, Long productId, Integer quantity) {
         log.info(LoggerMessages.CART_UPDATE_QUANTITY, productId, quantity, userId);
-        Cart cart = cartService.getOrCreateCart(userId);
 
+        // Validate input parameters
+        if (userId == null || productId == null || quantity == null) {
+            throw new IllegalArgumentException("User ID, Product ID, and Quantity are required");
+        }
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+
+        if (quantity > Constants.MAX_ITEM_QUANTITY) {
+            throw new IllegalArgumentException(String.format("Quantity cannot exceed %d", Constants.MAX_ITEM_QUANTITY));
+        }
+
+        Cart cart = cartService.getOrCreateCart(userId);
         Product product = productService.getProductById(productId);
 
-        CartItem cartItem = getCartItem(cart,product);
+        // Check product availability and stock
+        if (!productService.checkProductQuantity(productId, quantity)) {
+            log.warn(LoggerMessages.CART_PRODUCT_NOT_AVAILABLE, productId, userId);
+            throw new IllegalArgumentException(String.format(ErrorMessages.PRODUCT_NOT_AVAILABLE, productId));
+        }
 
-        cart.getItems().stream()
-                .filter(item -> item.getProduct().getProductId().equals(productId))
-                .findFirst()
-                .ifPresent(item -> item.setQuantity(quantity));
-
+        CartItem cartItem = getCartItem(cart, product);
         cartItem.setQuantity(quantity);
+        cartItem.setProductPrice(product.getPrice()); // Update price in case it changed
+
         cartItemRepository.save(cartItem);
         log.info(LoggerMessages.CART_UPDATE_QUANTITY, userId, productId, quantity);
 
-        //TODO update cart total also ?
+        // Update cart total and save cart
+        cart.updateTotal();
         cartService.save(cart);
 
         return cartItemMapper.toDTO(cartItem);
@@ -118,24 +173,47 @@ public class CartItemServiceImpl implements CartItemService {
     @Transactional
     public CartItemDTO removeFromCart(Integer userId, Long productId) {
         log.info(LoggerMessages.CART_REMOVE_PRODUCT, productId, userId);
+
+        // Validate input parameters
+        if (userId == null || productId == null) {
+            throw new IllegalArgumentException("User ID and Product ID are required");
+        }
+
         Cart cart = cartService.getOrCreateCart(userId);
-
         Product product = productService.getProductById(productId);
-
         CartItem cartItem = getCartItem(cart, product);
 
+        // Store DTO before deletion
+        CartItemDTO cartItemDTO = cartItemMapper.toDTO(cartItem);
+
+        // Delete cart item
         cartItemRepository.delete(cartItem);
 
+        // Update cart total and save cart
+        cart.updateTotal();
+        cartService.save(cart);
+
         log.info(LoggerMessages.CART_REMOVE_PRODUCT, userId, productId);
-        return cartItemMapper.toDTO(cartItem);
+        return cartItemDTO;
     }
 
     @Transactional
     @Override
     public void clearCart(Integer userId) {
         log.info(LoggerMessages.CART_CLEARING, userId);
+
+        // Validate input parameter
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID is required");
+        }
+
         Cart cart = cartService.getOrCreateCart(userId);
         cartItemRepository.deleteByCart(cart);
+
+        // Update cart total and save cart
+        cart.updateTotal();
+        cartService.save(cart);
+
         log.info(LoggerMessages.CART_CLEARED, userId);
     }
 }
