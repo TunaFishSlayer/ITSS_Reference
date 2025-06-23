@@ -29,17 +29,23 @@ public class OrderItem {
     private Product product;
 
     // Quantity of the product
+    @Column(name = "quantity")
     private Integer quantity;
 
     // Unit price of the product
     @Column(name = "unit_price")
     private Float unitPrice;
 
-
-
-
     // Calculate line total (quantity * unitPrice)
     public Float getLineTotal(){
         return quantity * unitPrice;
+    }
+    // Calculate line weight (product weight * quantity)
+    public Float getLineWeight() {
+        return product.getWeight() * quantity;
+    }
+
+    public boolean isRushEligible(){
+        return product.getRushEligible();
     }
 }

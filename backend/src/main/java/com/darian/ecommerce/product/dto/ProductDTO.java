@@ -18,10 +18,10 @@ public class ProductDTO {
     private String category;
     private String name;
     private String description;
+    private Float weight; // Thêm trường weight để lưu trọng lượng sản phẩm
+    private boolean rushEligible; // Thêm trường này để xác định sản phẩm có đủ điều kiện giao hàng nhanh hay không
+    private String barcode;
     private Float price;
     private String specifications;
     private List<String> images;  // Lưu danh sách URL thay vì kiểu String đơn lẻ
-
-
-
 }

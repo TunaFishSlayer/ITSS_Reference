@@ -13,7 +13,7 @@ public class DeliveryInfoMapper {
                 .email(info.getEmail())
                 .provinceCity(info.getProvinceCity())
                 .address(info.getAddress())
-                .shippingInstructions(info.getShippingInstructions())
+                .deliveryInstructions(info.getDeliveryInstructions())
                 .build();
     }
 
@@ -24,7 +24,7 @@ public class DeliveryInfoMapper {
                 .email(dto.getEmail())
                 .provinceCity(dto.getProvinceCity())
                 .address(dto.getAddress())
-                .shippingInstructions(dto.getShippingInstructions())
+                .deliveryInstructions(dto.getDeliveryInstructions())
                 .build();
     }
 }

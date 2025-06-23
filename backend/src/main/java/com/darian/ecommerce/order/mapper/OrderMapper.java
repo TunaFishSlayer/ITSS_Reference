@@ -22,8 +22,21 @@ public class OrderMapper {
         this.userService = userService;
     }
 
-    public  OrderDTO toOrderDTO(Order order) {
-        //TODO - check if cast suitable ?
+    public BaseOrderDTO toBaseOrderDTO(Order order) {
+        return (BaseOrderDTO) BaseOrderDTO.builder()
+                .orderId(order.getOrderId())
+                .customerId(order.getUser().getId())
+                .items(orderItemMapper.toDTOList(order.getItems()))
+                .orderStatus(order.getOrderStatus())
+                .deliveryInfo(deliveryInfoMapper.toDTO(order.getDeliveryInfo()))
+                .subtotal(order.getSubtotal())
+                .shippingFee(order.getShippingFee())
+                .total(order.getTotal())
+                .createdDate(LocalDateTime.now()) // or order.getCreatedDate()
+                .build();
+    }
+
+    public OrderDTO toOrderDTO(Order order) {
         return (OrderDTO) OrderDTO.builder()
                 .orderId(order.getOrderId())
                 .customerId(order.getUser().getId())
@@ -37,7 +50,7 @@ public class OrderMapper {
                 .build();
     }
 
-    public   RushOrderDTO toRushOrderDTO(Order order, LocalDateTime rushDeliveryTime) {
+    public RushOrderDTO toRushOrderDTO(Order order) {
         return RushOrderDTO.builder()
                 .orderId(order.getOrderId())
                 .customerId(order.getUser().getId())
@@ -48,7 +61,7 @@ public class OrderMapper {
                 .shippingFee(order.getShippingFee())
                 .total(order.getTotal())
                 .createdDate(LocalDateTime.now()) // or order.getCreatedDate()
-                .rushDeliveryTime(rushDeliveryTime)
+                .rushDeliveryTime(order.getRushDeliveryTime())
                 .build();
     }
 
