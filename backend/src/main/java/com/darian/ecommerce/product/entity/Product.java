@@ -61,6 +61,14 @@ public class Product {
     @Column(name = "product_specification")
     private String specifications;
 
+    // Product weight
+    @Column(name = "product_weight")
+    private Float weight;
+
+    // Whether the product is eligible for rush delivery
+    @Column(name = "product_rush_eligible")
+    private Boolean rushEligible;
+
     // Quantity in stock
     @Column(name = "stock_quantity")
     private Integer stockQuantity;

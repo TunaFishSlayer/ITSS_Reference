@@ -34,6 +34,7 @@ public class ApiEndpoints {
     public static final String ORDER_PAYMENT = "/{orderId}/pay";
     public static final String ORDER_CANCEL = "/{orderId}/cancel";
     public static final String ORDER_DELIVERY = "/{orderId}/delivery";
+    public static final String ORDER_RUSH_DELIVERY = "/{orderId}/rush-delivery";
     
     // Payment endpoints
     public static final String PAYMENT = BASE_API + "/payment";
@@ -45,6 +46,8 @@ public class ApiEndpoints {
     public static final String VNPAY_PAYMENT = "/create_payment_url";
     public static final String VNPAY_REFUND = "/refund";
     public static final String VNPAY_QUERY = "/query";
+
+    //public static final String[] ORDER_RUSH_DELIVERY = null;
     
     private ApiEndpoints() {
         // Private constructor to prevent instantiation

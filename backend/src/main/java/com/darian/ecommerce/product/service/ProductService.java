@@ -49,7 +49,4 @@ public interface ProductService {
     // Check if deleting a product affects any orders
     Boolean checkOrdersAffected(Long productId);
 
-
-
-
 }

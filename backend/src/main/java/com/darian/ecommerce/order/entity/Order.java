@@ -36,6 +36,9 @@ public class Order {
     @Column(name = "is_rush_order")
     private Boolean isRushOrder;
 
+    @Column(name = "rush_delivery_time")
+    private LocalDateTime rushDeliveryTime;
+    
     // Delivery information (1-1 relationship)
     @ManyToOne
     @JoinColumn(name = "delivery_info_id", nullable = false)

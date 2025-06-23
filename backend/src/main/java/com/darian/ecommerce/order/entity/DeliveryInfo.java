@@ -35,8 +35,8 @@ public class DeliveryInfo {
     // Detailed address for delivery
     private String address;
 
-    // Additional shipping instructions
-    @Column(name = "shipping_instruction")
-    private String shippingInstructions;
+    // Additional delivery instructions
+    @Column(name = "delivery_instruction")
+    private String deliveryInstructions;
 
 }
