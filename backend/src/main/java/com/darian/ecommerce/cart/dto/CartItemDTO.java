@@ -26,9 +26,6 @@ public class CartItemDTO {
     // Line total (quantity * productPrice)
     private Float lineTotal;
 
-    // Available stock quantity
-    private Integer availableStock;
-
     // Calculate line total
     public Float getLineTotal() {
         if (quantity != null && productPrice != null) {

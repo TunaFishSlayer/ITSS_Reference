@@ -31,7 +31,6 @@ public class CartItemMapper {
                 .quantity(item.getQuantity())
                 .productPrice(item.getProductPrice())
                 .lineTotal(item.getQuantity() * item.getProductPrice())
-                .availableStock(product != null ? product.getStockQuantity() : 0)
                 .build();
     }
 

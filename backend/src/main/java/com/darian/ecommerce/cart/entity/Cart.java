@@ -37,29 +37,20 @@ public class Cart {
     @Column(name = "total")
     private Float total;
 
-    // Timestamp when cart was created
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    // Timestamp when cart was last updated
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
     // Update total based on items
     public void updateTotal() {
-        if (items == null || items.isEmpty()) {
+        if (isEmpty()) {
             this.total = 0.0f;
         } else {
             this.total = (float) items.stream()
                     .mapToDouble(item -> item.getProductPrice() * item.getQuantity())
                     .sum();
         }
-        this.updatedAt = LocalDateTime.now();
     }
 
     // Get total number of items in cart
     public Integer getTotalItems() {
-        if (items == null || items.isEmpty()) {
+        if (isEmpty()) {
             return 0;
         }
         return items.stream()
@@ -97,16 +88,9 @@ public class Cart {
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
         if (this.total == null) {
             this.total = 0.0f;
         }
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 }

@@ -23,14 +23,8 @@ public class CartDTO {
     // Total cost of the cart
     private Float total;
 
-    // Total number of items in cart
+    // Total number of items in cartAdd commentMore actions
     private Integer totalItems;
-
-    // Timestamp when cart was created
-    private LocalDateTime createdAt;
-
-    // Timestamp when cart was last updated
-    private LocalDateTime updatedAt;
 
     // Check if cart is empty
     public boolean isEmpty() {

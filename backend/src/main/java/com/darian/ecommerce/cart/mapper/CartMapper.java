@@ -26,8 +26,6 @@ public class CartMapper {
                 .items(cartItemMapper.toDTOList(cart.getItems()))
                 .total(cart.getTotal())
                 .totalItems(cart.getTotalItems())
-                .createdAt(cart.getCreatedAt())
-                .updatedAt(cart.getUpdatedAt())
                 .build();
     }
 }
