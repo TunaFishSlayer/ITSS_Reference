@@ -1,4 +1,5 @@
--- 1. user_accountINSERT INTO user_account (create_at, email, password, role, username) VALUES
+-- 1. user_account
+INSERT INTO user_account (create_at, email, password, role, username) VALUES
 ('2024-06-01 10:00:00', 'useracc1@example.com', '$2a$10$9IMAT.9RFpznQJsD7oxwbOfFGDM6Qj3/e.do7iY52kmVYz.lI49Pe', 'CUSTOMER', 'useracc1'),
 ('2024-06-02 10:00:00', 'useracc2@example.com', '$2a$10$9IMAT.9RFpznQJsD7oxwbOfFGDM6Qj3/e.do7iY52kmVYz.lI49Pe', 'CUSTOMER', 'useracc2'),
 ('2024-06-03 10:00:00', 'useracc3@example.com', '$2a$10$9IMAT.9RFpznQJsD7oxwbOfFGDM6Qj3/e.do7iY52kmVYz.lI49Pe', 'CUSTOMER', 'useracc3'),
