@@ -4,19 +4,28 @@ import com.darian.ecommerce.cart.dto.CartDTO;
 import com.darian.ecommerce.cart.entity.Cart;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class CartMapper {
-    private  final CartItemMapper cartItemMapper;
+    private final CartItemMapper cartItemMapper;
 
     public CartMapper(CartItemMapper cartItemMapper) {
         this.cartItemMapper = cartItemMapper;
     }
 
     public CartDTO toDTO(Cart cart) {
+        if (cart == null) {
+            return null;
+        }
+
+        // Ensure total is calculated
+        cart.updateTotal();
+
         return CartDTO.builder()
+                .cartId(cart.getId())
                 .userId(cart.getUser().getId())
                 .items(cartItemMapper.toDTOList(cart.getItems()))
+                .total(cart.getTotal())
+                .totalItems(cart.getTotalItems())
                 .build();
     }
 }

@@ -1,2 +1,3 @@
-example - password123
-example2 - password123
+useracc1 - password123
+useracc2 - password123
+manageracc1 - password123
