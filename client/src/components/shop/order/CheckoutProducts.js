@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { LayoutContext } from "../layout";
 import { subTotal, quantity, totalCost } from "../partials/Mixins";
 
-import { cartListProduct } from "../partials/FetchApi";
+import { getCartByUser } from "../partials/FetchApi";
 import { getBrainTreeToken, getPaymentProcess } from "./FetchApi";
 import { fetchData, fetchbrainTree, pay } from "./Action";
 
@@ -25,7 +25,7 @@ export const CheckoutComponent = (props) => {
   });
 
   useEffect(() => {
-    fetchData(cartListProduct, dispatch);
+    fetchData(getCartByUser, dispatch);
     fetchbrainTree(getBrainTreeToken, setState);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
