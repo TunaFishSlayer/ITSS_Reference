@@ -6,7 +6,7 @@ import Submenu from "./Submenu";
 import ProductDetailsSectionTwo from "./ProductDetailsSectionTwo";
 
 import { getSingleProduct } from "./FetchApi";
-import { cartListProduct } from "../partials/FetchApi";
+import { getCartByUser } from "../partials/FetchApi";
 
 import { isWishReq, unWishReq, isWish } from "../home/Mixins";
 import { updateQuantity, slideImage, addToCart, cartList } from "./Mixins";
@@ -42,33 +42,77 @@ const ProductDetailsSection = (props) => {
     try {
       let responseData = await getSingleProduct(id);
       setTimeout(() => {
-        if (responseData.Product) {
+        // Backend returns product data directly, not wrapped in Product object
+        if (responseData && responseData.productId) {
+          // Map backend DTO to frontend expected format
+          const productData = {
+            _id: responseData.productId,
+            pName: responseData.name,
+            pDescription: responseData.description,
+            pPrice: responseData.price,
+            pImages: responseData.images || ['/placeholder-product.jpg'],
+            pQuantity: responseData.quantity || 0,
+            pCategory: {
+              _id: responseData.categoryId || 1,
+              cName: responseData.category || 'Unknown Category'
+            },
+            pRatingsReviews: responseData.reviews || []
+          };
+
+          layoutDispatch({
+            type: "singleProductDetail",
+            payload: productData,
+          }); // Dispatch in layout context
+          setPimages(productData.pImages);
+          dispatch({ type: "loading", payload: false });
+          layoutDispatch({ type: "inCart", payload: cartList() }); // This function change cart in cart state
+        } else if (responseData && responseData.Product) {
+          // Fallback for old format
           layoutDispatch({
             type: "singleProductDetail",
             payload: responseData.Product,
-          }); // Dispatch in layout context
+          });
           setPimages(responseData.Product.pImages);
           dispatch({ type: "loading", payload: false });
-          layoutDispatch({ type: "inCart", payload: cartList() }); // This function change cart in cart state
+          layoutDispatch({ type: "inCart", payload: cartList() });
+        } else {
+          console.log("No product data found");
+          dispatch({ type: "loading", payload: false });
         }
-        if (responseData.error) {
+        if (responseData && responseData.error) {
           console.log(responseData.error);
         }
       }, 500);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching product:", error);
+      dispatch({ type: "loading", payload: false });
     }
     fetchCartProduct(); // Updating cart total
   };
 
   const fetchCartProduct = async () => {
     try {
-      let responseData = await cartListProduct();
-      if (responseData && responseData.Products) {
-        layoutDispatch({ type: "cartProduct", payload: responseData.Products }); // Layout context Cartproduct fetch and dispatch
+      // Get current user ID from localStorage
+      const jwt = localStorage.getItem("jwt");
+      const userId = jwt ? JSON.parse(jwt).user?.id || JSON.parse(jwt).user?._id : null;
+
+      if (userId) {
+        let responseData = await getCartByUser(userId);
+        if (responseData && responseData.success && responseData.data) {
+          // Backend returns cart with items array
+          const cartItems = responseData.data.items || [];
+          layoutDispatch({ type: "cartProduct", payload: cartItems }); // Layout context Cartproduct fetch and dispatch
+        }
+      } else {
+        // Fallback to localStorage cart if no user logged in
+        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+        layoutDispatch({ type: "cartProduct", payload: localCart });
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching cart:", error);
+      // Fallback to localStorage cart on error
+      const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+      layoutDispatch({ type: "cartProduct", payload: localCart });
     }
   };
 

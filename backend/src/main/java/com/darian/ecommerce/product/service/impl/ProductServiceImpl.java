@@ -167,6 +167,18 @@ public class ProductServiceImpl implements ProductService {
         return managerDTO;
     }
 
+    @Override
+    public Boolean reduceProductQuantity(Long productId, Integer quantity) {
+        if (quantity <0 ) {
+            logger.warn("ProductServiceImpl: updateProductQuantity : reduce quantity cant be <0");
+        }
+        Product product = getProductById(productId);
+        Integer currentQuantity = product.getStockQuantity();
+        product.setStockQuantity(currentQuantity - quantity);
+        logger.info("product "+productId+" has been reduced a number of "+quantity+" products");
+        return true;
+    }
+
     // Delete a product by ID (Manager only)
     @Override
     public void deleteProduct(Long productId, Integer userId) {

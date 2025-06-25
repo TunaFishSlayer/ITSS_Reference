@@ -37,26 +37,6 @@ public class VNPayConfig {
 
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
-    public static String hashAllFields(Map fields) {
-        List fieldNames = new ArrayList(fields.keySet());
-        Collections.sort(fieldNames);
-        StringBuilder sb = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
-        while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) fields.get(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                sb.append(fieldName);
-                sb.append("=");
-                sb.append(fieldValue);
-                if (itr.hasNext()) {
-                    sb.append("&");
-                }
-            }
-        }
-        return hmacSHA512(secretKey, sb.toString());
-    }
-
     public static String hmacSHA512(final String key, final String data) {
         try {
             if (key == null || data == null) {
@@ -76,36 +56,6 @@ public class VNPayConfig {
         } catch (Exception ex) {
             return "";
         }
-    }
-
-    // FIX: Sửa lại hàm build URL để đảm bảo đúng format
-    public static String buildPaymentUrl(Map<String, String> params, String secureHash) {
-        // Tạo danh sách các field names và sắp xếp
-        List<String> fieldNames = new ArrayList<>(params.keySet());
-        Collections.sort(fieldNames);
-
-        StringBuilder query = new StringBuilder();
-        Iterator<String> itr = fieldNames.iterator();
-
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
-            String fieldValue = params.get(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                try {
-                    // Encode cho URL parameters
-                    query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()));
-                    query.append('=');
-                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    if (itr.hasNext()) {
-                        query.append('&');
-                    }
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        // Thêm secure hash vào cuối URL
-        return vnp_PayUrl + "?" + query.toString() + "&vnp_SecureHash=" + secureHash;
     }
 
     public static String getIpAddress(HttpServletRequest request) {
@@ -130,12 +80,6 @@ public class VNPayConfig {
         }
         return sb.toString();
     }
-//
-//    public static String getCreateDate() {
-//        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-//        return formatter.format(cld.getTime());
-//    }
 
     // FIX: Sửa timezone cho đúng với Việt Nam
     public static String getCreateDate() {
@@ -152,11 +96,4 @@ public class VNPayConfig {
         formatter.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         return formatter.format(cld.getTime());
     }
-//
-//    public static String getExpireDate(int minutesToAdd) {
-//        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-//        cld.add(Calendar.MINUTE, minutesToAdd);
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-//        return formatter.format(cld.getTime());
-//    }
 }

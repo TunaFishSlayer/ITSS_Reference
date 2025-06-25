@@ -7,6 +7,7 @@ public class ErrorMessages {
     public static final String PAYMENT_INVALID_STATUS = "Invalid payment status for order: %s";
     public static final String PAYMENT_NOT_FOUND = "Payment not found for order: %s";
     public static final String PAYMENT_ALREADY_PROCESSED = "Payment already processed for order: %s";
+    public static final String PAYMENT_FAILED = "Payment failed for order: %s";
     
     // VNPay specific errors
     public static final String VNPAY_CONNECTION_ERROR = "Unable to connect to VNPay API";

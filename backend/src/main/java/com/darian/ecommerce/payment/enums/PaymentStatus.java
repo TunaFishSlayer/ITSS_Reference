@@ -1,8 +1,8 @@
 package com.darian.ecommerce.payment.enums;
 
 public enum PaymentStatus {
-    UNPAID,
+    UNPAID, //dùng bên order
     PAID,
-    REFUNDED,
     FAILED,
+    REFUNDED
 }

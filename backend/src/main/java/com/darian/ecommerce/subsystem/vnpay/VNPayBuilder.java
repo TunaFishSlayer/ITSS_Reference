@@ -88,8 +88,6 @@ public class VNPayBuilder {
 
         return paymentUrl;
     }
-
-
     protected VNPayRequest buildPaymentRequest(Long orderId, Float amount, String content) {
         return VNPayRequest.builder()
                 .orderId(orderId)

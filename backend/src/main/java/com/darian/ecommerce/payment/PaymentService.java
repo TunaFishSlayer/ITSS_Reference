@@ -1,6 +1,7 @@
 package com.darian.ecommerce.payment;
 
 import com.darian.ecommerce.order.exception.OrderNotFoundException;
+import com.darian.ecommerce.payment.dto.PaymentConfirmDTO;
 import com.darian.ecommerce.payment.dto.PaymentResult;
 import com.darian.ecommerce.payment.dto.RefundResult;
 import com.darian.ecommerce.order.entity.Order;
@@ -26,7 +27,7 @@ public interface PaymentService {
 
 //    PaymentResult payOrder(Long orderId, String paymentMethod, HttpServletRequest request) throws OrderNotFoundException;
 
-    PaymentResult payOrder(Long orderId, String paymentMethod, HttpServletRequest request) throws OrderNotFoundException, UnsupportedEncodingException;
+    String payOrder(Long orderId, String paymentMethod, HttpServletRequest request) throws OrderNotFoundException, UnsupportedEncodingException;
 
     // Validate payment details for an order
     Boolean validatePayment(Order order) throws OrderNotFoundException;
@@ -39,4 +40,6 @@ public interface PaymentService {
 
 
     boolean handleVnPayIpn(Map<String, String> vnpParams);
+
+    boolean handlePayment(PaymentConfirmDTO dto);
 }

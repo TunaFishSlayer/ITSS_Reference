@@ -12,7 +12,7 @@ public class BaseException extends RuntimeException {
     }
 
     public BaseException(ErrorCode errorCode) {
-        super(errorCode.getDefaultMessage());
+        super(errorCode.getMessageTemplate());
         this.errorCode = errorCode;
     }
 } 

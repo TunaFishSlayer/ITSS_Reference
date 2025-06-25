@@ -24,6 +24,19 @@
         .fail {
             color: red;
         }
+
+        button {
+            background-color: #191C1F;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
     </style>
 </head>
 <body>
@@ -31,7 +44,6 @@
 <div class="result" id="payment-result">
     <h2>Đang xử lý kết quả thanh toán...</h2>
 </div>
-
 <script>
     function getParam(name) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -43,6 +55,8 @@
     const amount = getParam('vnp_Amount');
     const bankCode = getParam('vnp_BankCode');
     const payDate = getParam('vnp_PayDate');
+    const transactionNo = getParam('vnp_TransactionNo');
+    const orderInfo = getParam('vnp_OrderInfo');
 
     const resultDiv = document.getElementById('payment-result');
 
@@ -50,21 +64,23 @@
         resultDiv.innerHTML = `
             <h2 class="success">Thanh toán thành công!</h2>
             <p><strong>Mã đơn hàng:</strong> ${txnRef}</p>
+            <p><strong>Mã giao dịch VNPAY:</strong> ${transactionNo}</p>
             <p><strong>Số tiền:</strong> ${(amount / 100).toLocaleString()} VND</p>
             <p><strong>Ngân hàng:</strong> ${bankCode}</p>
             <p><strong>Thời gian:</strong> ${payDate}</p>
+            <button onclick="window.location.href='/'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px;">Quay về Trang Chủ</button>
         `;
 
-        // Gửi xác nhận về backend
         fetch('/api/v1/payment/confirm', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                txnRef: txnRef,
-                amount: amount,
-                bankCode: bankCode,
-                payDate: payDate,
-                status: 'SUCCESS'
+                vnpTransactionNo: transactionNo,
+                vnpTxnRef: txnRef,
+                vnpAmount: amount,
+                vnpOrderInfo: orderInfo,
+                vnpPayDate: payDate,
+                vnpResponseCode: responseCode
             })
         }).then(res => res.text()).then(data => {
             console.log("Server xác nhận:", data);
@@ -75,17 +91,16 @@
             <h2 class="fail">Thanh toán thất bại!</h2>
             <p><strong>Mã đơn hàng:</strong> ${txnRef || 'Không xác định'}</p>
             <p><strong>Mã lỗi:</strong> ${responseCode}</p>
+            <button onclick="window.location.href='/'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px;">Quay về Trang Chủ</button>
         `;
 
-        // Gửi xác nhận thất bại về backend
         fetch('/api/v1/payment/confirm', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                txnRef: txnRef,
-                amount: amount,
-                status: 'FAILED',
-                responseCode: responseCode
+                vnpTxnRef: txnRef,
+                vnpAmount: amount,
+                vnpResponseCode: responseCode
             })
         }).then(res => res.text()).then(data => {
             console.log("Server xác nhận thất bại:", data);

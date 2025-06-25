@@ -8,17 +8,34 @@ const BearerToken = () =>
 const Headers = () => {
   return {
     headers: {
-      token: `Bearer ${BearerToken()}`,
+      Authorization: `Bearer ${BearerToken()}`, // Fixed: Use Authorization instead of token
     },
   };
 };
 
+// ⚠️ WARNING: Backend does not have CategoryController
+// These functions return mock data or throw errors
 export const getAllCategory = async () => {
+  console.warn("getAllCategory: Backend does not have CategoryController. Returning mock data.");
   try {
-    let res = await axios.get(`${apiURL}/api/category/all-category`, Headers());
-    return res.data;
+    // Return mock categories based on the data-init.sql
+    return {
+      success: true,
+      Categories: [
+        { _id: 1, cName: "Electronics", cDescription: "Electronic devices and gadgets", cStatus: "Active" },
+        { _id: 2, cName: "Fashion and Apparel", cDescription: "Clothing and accessories", cStatus: "Active" },
+        { _id: 3, cName: "Beauty and Personal Care", cDescription: "Cosmetics and personal care products", cStatus: "Active" },
+        { _id: 4, cName: "Furniture", cDescription: "Home and office furniture", cStatus: "Active" },
+        { _id: 5, cName: "Beverages", cDescription: "Drinks and beverages", cStatus: "Active" },
+        { _id: 6, cName: "Food", cDescription: "Food items and snacks", cStatus: "Active" },
+        { _id: 7, cName: "Household Essentials", cDescription: "Household cleaning and essentials", cStatus: "Active" },
+        { _id: 8, cName: "Toys and Hobbies", cDescription: "Toys and hobby-related products", cStatus: "Active" },
+        { _id: 9, cName: "Media", cDescription: "Books, movies, and music", cStatus: "Active" }
+      ]
+    };
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 
@@ -28,47 +45,25 @@ export const createCategory = async ({
   cDescription,
   cStatus,
 }) => {
-  let formData = new FormData();
-  formData.append("cImage", cImage);
-  formData.append("cName", cName);
-  formData.append("cDescription", cDescription);
-  formData.append("cStatus", cStatus);
-
-  try {
-    let res = await axios.post(
-      `${apiURL}/api/category/add-category`,
-      formData,
-      Headers()
-    );
-    return res.data;
-  } catch (error) {
-    console.log(error);
-  }
+  console.warn("createCategory: Backend does not have CategoryController. This operation is not supported.");
+  return {
+    success: false,
+    message: "Category creation is not supported in the current backend implementation."
+  };
 };
 
 export const editCategory = async (cId, des, status) => {
-  let data = { cId: cId, cDescription: des, cStatus: status };
-  try {
-    let res = await axios.post(
-      `${apiURL}/api/category/edit-category`,
-      data,
-      Headers()
-    );
-    return res.data;
-  } catch (error) {
-    console.log(error);
-  }
+  console.warn("editCategory: Backend does not have CategoryController. This operation is not supported.");
+  return {
+    success: false,
+    message: "Category editing is not supported in the current backend implementation."
+  };
 };
 
 export const deleteCategory = async (cId) => {
-  try {
-    let res = await axios.post(
-      `${apiURL}/api/category/delete-category`,
-      { cId },
-      Headers()
-    );
-    return res.data;
-  } catch (error) {
-    console.log(error);
-  }
+  console.warn("deleteCategory: Backend does not have CategoryController. This operation is not supported.");
+  return {
+    success: false,
+    message: "Category deletion is not supported in the current backend implementation."
+  };
 };

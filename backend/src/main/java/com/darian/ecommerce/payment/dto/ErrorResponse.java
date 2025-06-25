@@ -25,7 +25,7 @@ public class ErrorResponse {
     public ErrorResponse(int status, ErrorCode errorCode, String message) {
         this.status = status;
         this.errorCode = errorCode.getCode();
-        this.error = errorCode.getDefaultMessage();
+        this.error = errorCode.getMessageTemplate();
         this.message = message;
         this.timestamp = LocalDateTime.now();
     }
