@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { LayoutContext } from "../index";
-import { cartListProduct } from "./FetchApi";
+import { getCartByUser } from "./FetchApi";
 import { isAuthenticate } from "../auth/fetchApi";
 import { cartList } from "../productDetails/Mixins";
 import { subTotal, quantity, totalCost } from "./Mixins";
@@ -26,13 +26,32 @@ const CartModal = () => {
 
   const fetchData = async () => {
     try {
-      let responseData = await cartListProduct();
-      if (responseData && responseData.Products) {
-        dispatch({ type: "cartProduct", payload: responseData.Products });
+      // Get current user ID from localStorage
+      const jwt = localStorage.getItem("jwt");
+      const userId = jwt
+        ? JSON.parse(jwt).user?.id || JSON.parse(jwt).user?._id
+        : null;
+
+      if (userId) {
+        let responseData = await getCartByUser(userId);
+        if (responseData && responseData.success && responseData.data) {
+          // Backend returns cart with items array
+          const cartItems = responseData.data.items || [];
+          dispatch({ type: "cartProduct", payload: cartItems });
+          dispatch({ type: "cartTotalCost", payload: totalCost() });
+        }
+      } else {
+        // Fallback to localStorage cart if no user logged in
+        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+        dispatch({ type: "cartProduct", payload: localCart });
         dispatch({ type: "cartTotalCost", payload: totalCost() });
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching cart:", error);
+      // Fallback to localStorage cart on error
+      const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+      dispatch({ type: "cartProduct", payload: localCart });
+      dispatch({ type: "cartTotalCost", payload: totalCost() });
     }
   };
 
@@ -166,7 +185,9 @@ const CartModal = () => {
                                         />
                                       </svg>
                                     </span>
-                                    <span className="font-semibold">{curQty}</span>
+                                    <span className="font-semibold">
+                                      {curQty}
+                                    </span>
                                     {/* Nút tăng */}
                                     <span
                                       onClick={() =>
@@ -201,7 +222,9 @@ const CartModal = () => {
                                     </span>
                                   </>
                                 ) : (
-                                  <span className="font-semibold">{curQty}</span>
+                                  <span className="font-semibold">
+                                    {curQty}
+                                  </span>
                                 )}
                               </div>
                             </div>

@@ -36,6 +36,10 @@ public class SecurityConfig {
                         .requestMatchers("/payment/vnpay-return.html").permitAll() // 👈 Cho phép truy cập file tĩnh
                         .requestMatchers(ApiEndpoints.AUTH + "/**").permitAll()
                         .requestMatchers(ApiEndpoints.PAYMENT + "/**").permitAll()
+                        .requestMatchers(ApiEndpoints.PRODUCTS_CUSTOMER).permitAll() // Allow public access to customer products
+                        .requestMatchers(ApiEndpoints.PRODUCTS + "/customer/**").permitAll() // Allow public access to customer product details
+                        .requestMatchers(ApiEndpoints.PRODUCTS + "/*/related").permitAll() // Allow public access to related products
+                        .requestMatchers(HttpMethod.GET, ApiEndpoints.PRODUCTS + "/customer/search").permitAll() // Allow public product search
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 );

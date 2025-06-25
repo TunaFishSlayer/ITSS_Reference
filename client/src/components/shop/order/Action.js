@@ -1,17 +1,43 @@
 import { createOrder } from "./FetchApi";
 
-export const fetchData = async (cartListProduct, dispatch) => {
+export const fetchData = async (getCartByUser, dispatch) => {
   dispatch({ type: "loading", payload: true });
   try {
-    let responseData = await cartListProduct();
-    if (responseData && responseData.Products) {
+    // Get current user ID from localStorage
+    const jwt = localStorage.getItem("jwt");
+    const userId = jwt ? JSON.parse(jwt).user?.id || JSON.parse(jwt).user?._id : null;
+
+    if (userId) {
+      let responseData = await getCartByUser(userId);
+      if (responseData && responseData.success && responseData.data) {
+        setTimeout(function () {
+          // Backend returns cart with items array
+          const cartItems = responseData.data.items || [];
+          dispatch({ type: "cartProduct", payload: cartItems });
+          dispatch({ type: "loading", payload: false });
+        }, 1000);
+      } else {
+        setTimeout(function () {
+          dispatch({ type: "cartProduct", payload: [] });
+          dispatch({ type: "loading", payload: false });
+        }, 1000);
+      }
+    } else {
+      // Fallback to localStorage cart if no user logged in
+      const localCart = JSON.parse(localStorage.getItem("cart")) || [];
       setTimeout(function () {
-        dispatch({ type: "cartProduct", payload: responseData.Products });
+        dispatch({ type: "cartProduct", payload: localCart });
         dispatch({ type: "loading", payload: false });
       }, 1000);
     }
   } catch (error) {
-    console.log(error);
+    console.log("Error fetching cart data:", error);
+    // Fallback to localStorage cart on error
+    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setTimeout(function () {
+      dispatch({ type: "cartProduct", payload: localCart });
+      dispatch({ type: "loading", payload: false });
+    }, 1000);
   }
 };
 
