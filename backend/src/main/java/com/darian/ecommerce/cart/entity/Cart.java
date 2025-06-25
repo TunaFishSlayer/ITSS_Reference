@@ -30,7 +30,6 @@ public class Cart {
 
     // List of items in the cart (1-* relationship)
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
     private List<CartItem> items = new ArrayList<>();
 
     // Total cost of the cart

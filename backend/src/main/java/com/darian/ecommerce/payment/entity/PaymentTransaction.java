@@ -6,13 +6,11 @@ import com.darian.ecommerce.payment.enums.RefundStatus;
 import com.darian.ecommerce.payment.enums.TransactionType;
 import com.darian.ecommerce.order.entity.Order;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
 @Getter
 @Setter
@@ -34,10 +32,6 @@ public class PaymentTransaction {
     @Column(name = "transaction_code")
     private String transactionCode;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type")
-    private TransactionType transactionType;
-
     @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
@@ -48,8 +42,8 @@ public class PaymentTransaction {
     @Column(name = "transaction_content")
     private String transactionContent;
 
-    @Column(name = "transaction_timestamp")
-    private LocalDateTime transactionDate;
+    @Column(name = "pay_timestamp")
+    private LocalDateTime payTimestamp;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
@@ -64,6 +58,6 @@ public class PaymentTransaction {
     private RefundStatus refundStatus;
 
     @Column(name = "refund_timestamp")
-    private LocalDateTime refundDate;
+    private LocalDateTime refundTimestamp;
 
 }
