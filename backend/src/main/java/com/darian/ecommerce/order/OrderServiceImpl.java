@@ -3,25 +3,19 @@ package com.darian.ecommerce.order;
 import com.darian.ecommerce.audit.AuditLogService;
 import com.darian.ecommerce.auth.UserService;
 import com.darian.ecommerce.auth.entity.User;
+import com.darian.ecommerce.order.dto.*;
 import com.darian.ecommerce.order.mapper.DeliveryInfoMapper;
 import com.darian.ecommerce.order.mapper.OrderMapper;
 import com.darian.ecommerce.order.businesslogic.ordersplitter.OrderSplitter;
 import com.darian.ecommerce.order.businesslogic.shippingfee.ShippingFeeCalculatorFactory;
 import com.darian.ecommerce.cart.CartService;
 import com.darian.ecommerce.cart.dto.CartDTO;
-import com.darian.ecommerce.order.dto.RushOrderDeliveryInfoDTO;
 import com.darian.ecommerce.order.exception.OrderNotFoundException;
 import com.darian.ecommerce.audit.enums.ActionType;
 import com.darian.ecommerce.order.enums.OrderStatus;
 import com.darian.ecommerce.payment.enums.PaymentStatus;
 import com.darian.ecommerce.auth.enums.UserRole;
 import com.darian.ecommerce.order.entity.DeliveryInfo;
-import com.darian.ecommerce.order.dto.BaseOrderDTO;
-import com.darian.ecommerce.order.dto.DeliveryInfoDTO;
-import com.darian.ecommerce.order.dto.InvoiceDTO;
-import com.darian.ecommerce.order.dto.OrderDTO;
-import com.darian.ecommerce.order.dto.RushOrderDTO;
-import com.darian.ecommerce.order.dto.SplitOrderDTO;
 import com.darian.ecommerce.order.entity.Order;
 import com.darian.ecommerce.shared.constants.ErrorMessages;
 import com.darian.ecommerce.shared.constants.LoggerMessages;
@@ -84,7 +78,6 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toOrderDTO(savedOrder);
     }
 
-    @Override
     public SplitOrderDTO placeOrder(OrderDTO orderDTO) {
         if (orderDTO == null || orderDTO.getItems() == null || orderDTO.getItems().isEmpty()) {
             throw new IllegalArgumentException("Cart is empty or not provided.");
@@ -271,7 +264,7 @@ public class OrderServiceImpl implements OrderService {
     public Boolean isRushDeliverySupported(BaseOrderDTO baseOrderDTO) {
         // Check if address is in Hanoi inner city and all products are rush eligible
         return baseOrderDTO.getDeliveryInfo().getProvinceCity().equalsIgnoreCase("hanoi")
-            && baseOrderDTO.getItems().stream().allMatch(item -> item.isRushEligible());
+            && baseOrderDTO.getItems().stream().allMatch(OrderItemDTO::isRushEligible);
     }
 
     @Override
@@ -306,5 +299,10 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByUser_Id(customerId).stream()
                 .map(orderMapper::toOrderDTO)
                 .collect(Collectors.toList());
+    }
+    @Override
+    public SplitOrderDTO placeOrderFromCart(CartDTO cartDTO) {
+        OrderDTO createdOrder = createOrder(cartDTO);
+        return placeOrder(createdOrder);
     }
 }

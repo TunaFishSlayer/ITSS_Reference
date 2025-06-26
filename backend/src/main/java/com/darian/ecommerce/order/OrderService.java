@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public interface OrderService {
     OrderDTO createOrder(CartDTO cartDTO);
-
+    
     BaseOrderDTO getOrderDetails(Long orderId) throws OrderNotFoundException;
 
     InvoiceDTO getInvoice(Long orderId) throws OrderNotFoundException;
@@ -36,7 +36,7 @@ public interface OrderService {
 
     void setRejected(Long orderId);
 
-    SplitOrderDTO placeOrder(OrderDTO orderDTO);
+    SplitOrderDTO placeOrderFromCart(CartDTO cartDTO);
 
     //RushOrderDTO placeRushOrder(RushOrderDTO rushOrderDTO);
 

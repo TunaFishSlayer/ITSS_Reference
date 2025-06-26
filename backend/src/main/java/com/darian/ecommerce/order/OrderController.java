@@ -25,18 +25,12 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody CartDTO cartDTO) {
-        OrderDTO result = orderService.createOrder(cartDTO);
-        log.info(LoggerMessages.ORDER_CREATED, result.getOrderId());
-        return ResponseEntity.ok(result);
-    }
-
     @PostMapping("/place")
-    public ResponseEntity<SplitOrderDTO> placeOrder(@RequestBody OrderDTO orderDTO) {
-        SplitOrderDTO result = orderService.placeOrder(orderDTO);
+    public ResponseEntity<SplitOrderDTO> placeOrderFromCart(@RequestBody CartDTO cartDTO) {
+        SplitOrderDTO result = orderService.placeOrderFromCart(cartDTO);
         log.info(LoggerMessages.ORDER_CREATED, result);
         return ResponseEntity.ok(result);
+        
     }
 
     @PostMapping(ApiEndpoints.ORDER_CANCEL)
@@ -107,4 +101,6 @@ public class OrderController {
         orderService.setRejected(orderId);
         return ResponseEntity.noContent().build();
     }
+
+    
 }

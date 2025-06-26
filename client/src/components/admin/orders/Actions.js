@@ -15,20 +15,14 @@ export const fetchData = async (dispatch) => {
 };
 
 /* This method call the editmodal & dispatch category context */
-export const editOrderReq = (oId, type, status, dispatch) => {
+export const editOrderReq = (orderId, type, status, dispatch) => {
   if (type) {
     console.log("click update");
-    dispatch({ type: "updateOrderModalOpen", oId: oId, status: status });
+    dispatch({ type: "updateOrderModalOpen", orderId: orderId, status: status });
   }
 };
 
-export const deleteOrderReq = async (oId, dispatch) => {
-  let responseData = await deleteOrder(oId);
-  console.log(responseData);
-  if (responseData && responseData.success) {
-    fetchData(dispatch);
-  }
-};
+
 
 /* Filter All Order */
 export const filterOrder = async (
@@ -47,15 +41,15 @@ export const filterOrder = async (
         payload: responseData.Orders,
       });
       setDropdown(!dropdown);
-    } else if (type === "Not processed") {
+    } else if (type === "Pending") {
       newData = responseData.Orders.filter(
-        (item) => item.status === "Not processed"
+        (item) => item.status === "Pending"
       );
       dispatch({ type: "fetchOrderAndChangeState", payload: newData });
       setDropdown(!dropdown);
-    } else if (type === "Processing") {
+    } else if (type === "Confirmed") {
       newData = responseData.Orders.filter(
-        (item) => item.status === "Processing"
+        (item) => item.status === "Confirmed"
       );
       dispatch({ type: "fetchOrderAndChangeState", payload: newData });
       setDropdown(!dropdown);
@@ -72,6 +66,12 @@ export const filterOrder = async (
     } else if (type === "Cancelled") {
       newData = responseData.Orders.filter(
         (item) => item.status === "Cancelled"
+      );
+      dispatch({ type: "fetchOrderAndChangeState", payload: newData });
+      setDropdown(!dropdown);
+    } else if (type === "Rejected") {
+      newData = responseData.Orders.filter(
+        (item) => item.status === "Rejected"
       );
       dispatch({ type: "fetchOrderAndChangeState", payload: newData });
       setDropdown(!dropdown);
