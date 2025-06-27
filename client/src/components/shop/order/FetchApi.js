@@ -86,7 +86,6 @@ export const createVNPayPayment = async (orderId, paymentData) => {
 };
 
 
-
 // Set rush delivery info
 export const setRushDeliveryInfo = async (orderId, rushInfoDTO) => {
   try {

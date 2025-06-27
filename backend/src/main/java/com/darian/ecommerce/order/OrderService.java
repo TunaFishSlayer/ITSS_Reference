@@ -24,21 +24,13 @@ public interface OrderService {
 
     Optional<Order> findOrderById(Long orderId);
 
-    List<OrderDTO> getOrderHistory(Integer customerId);
+    List<BaseOrderDTO> getOrderHistory(Integer customerId);
 
     OrderDTO setDeliveryInfo(Long orderId, DeliveryInfoDTO deliveryInfoDTO) throws OrderNotFoundException;
 
     RushOrderDTO setRushDeliveryInfo(Long orderId, RushOrderDeliveryInfoDTO rushOrderDeliveryInfoDTO) throws OrderNotFoundException;
 
-    void setPending(Long orderId);
-
-    void setConfirmed(Long orderId);
-
-    void setRejected(Long orderId);
-
-    SplitOrderDTO placeOrderFromCart(CartDTO cartDTO);
-
-    //RushOrderDTO placeRushOrder(RushOrderDTO rushOrderDTO);
+    SplitOrderDTO placeOrder(OrderDTO orderDTO);
 
     void cancelOrder(Long orderId) throws OrderNotFoundException;
 
@@ -46,16 +38,11 @@ public interface OrderService {
 
     void updateOrderStatus(Long orderId, OrderStatus orderStatus);
 
-    //Boolean isRushOrder(Long orderId);
-
     Boolean checkAvailability(CartDTO cartDTO);
 
     Boolean validateDeliveryInfo(DeliveryInfoDTO deliveryInfoDTO);
 
-    //Boolean checkRushDeliveryAddress(String address);
-
     Boolean checkCancellationValidity(Long orderId);
-
 
     List<BaseOrderDTO> getOrdersbyStatus(OrderStatus status);
 
