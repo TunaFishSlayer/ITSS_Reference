@@ -5,6 +5,8 @@ import com.darian.ecommerce.shared.exception.ErrorCode;
 
 public class PaymentValidationException extends BaseException {
     public PaymentValidationException(String message) {
-        super(ErrorCode.VALIDATION_ERROR, message);
+        super(
+                ErrorCode.VALIDATION_ERROR,
+                ErrorCode.VALIDATION_ERROR.format(message) );
     }
 }

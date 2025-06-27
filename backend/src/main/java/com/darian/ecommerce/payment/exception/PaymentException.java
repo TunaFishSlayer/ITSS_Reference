@@ -1,8 +1,15 @@
 package com.darian.ecommerce.payment.exception;
 
-public class PaymentException extends RuntimeException {
-    // Base exception for payment-related errors
-    public PaymentException(String message) {
-    super(message);
-  }
+import com.darian.ecommerce.shared.exception.BaseException;
+import com.darian.ecommerce.shared.exception.ErrorCode;
+
+public class PaymentException extends BaseException {
+
+    public PaymentException(ErrorCode errorCode) {
+        super(errorCode);
+    }
+
+    public PaymentException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
 }

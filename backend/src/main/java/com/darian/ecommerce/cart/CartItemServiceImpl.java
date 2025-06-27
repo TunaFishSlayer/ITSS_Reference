@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -202,16 +203,33 @@ public class CartItemServiceImpl implements CartItemService {
     public void clearCart(Integer userId) {
         log.info(LoggerMessages.CART_CLEARING, userId);
 
-        // Validate input parameter
         if (userId == null) {
             throw new IllegalArgumentException("User ID is required");
         }
 
         Cart cart = cartService.getOrCreateCart(userId);
-        cartItemRepository.deleteByCart(cart);
+        if (cart != null) {
+            cart.getItems().clear(); // Sửa lại dùng clear() thay vì setItems(new ArrayList<>())
+            cart.setTotal(0f); // Nếu có thuộc tính total thì reset lại
+            cartService.save(cart);
+        }
 
-        // Update cart total and save cart
+        // Xoá từng item khỏi DB và xóa khỏi cart.items
+        List<CartItem> cartItems = cartItemRepository.findByCart(cart);
+        for (CartItem item : cartItems) {
+            cartItemRepository.delete(item);
+        }
+
+        // Loại bỏ tham chiếu trong bộ nhớ tránh Hibernate bị lỗi
+        if (!(cart.getItems() instanceof java.util.ArrayList)) {
+            cart.setItems(new java.util.ArrayList<>(cart.getItems()));
+        }
+        cart.getItems().clear();
+
+        // Cập nhật lại tổng tiền
         cart.updateTotal();
+
+        // Lưu lại cart
         cartService.save(cart);
 
         log.info(LoggerMessages.CART_CLEARED, userId);

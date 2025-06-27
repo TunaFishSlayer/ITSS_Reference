@@ -90,7 +90,11 @@ public class Order {
         return getSubtotal() + shippingFee - discount + getVAT();
     }
 
-
-
-
+    // Auto-set createdDate
+    @PrePersist
+    protected void onCreate() {
+        this.paymentStatus = PaymentStatus.UNPAID;
+        this.orderStatus = OrderStatus.PENDING;
+        this.isRushOrder = false;
+    }
 }

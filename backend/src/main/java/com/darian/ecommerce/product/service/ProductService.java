@@ -28,6 +28,8 @@ public interface ProductService {
     // Update an existing product (Manager only)
     ManagerProductDTO updateProduct(Integer userId,Long productId, ProductDTO productDTO);
 
+    Boolean reduceProductQuantity(Long productId, Integer quantity );
+
     // Delete a product by ID (Manager only)
     void deleteProduct(Long productId, Integer userId);
 

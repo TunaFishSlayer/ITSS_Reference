@@ -181,7 +181,9 @@ public class AuditLogServiceImpl implements AuditLogService {
         AuditLog auditLog = new AuditLog();
         auditLog.setActionType(result.getTransactionType() == TransactionType.PAYMENT ? 
                 ActionType.PAY_ORDER : ActionType.CANCEL_ORDER);
-        auditLog.setKeyword(String.format("%s processed for order %d (Transaction ID: %s)", 
+        //TODO : can phai lam them
+//        auditLog.setUser();
+        auditLog.setKeyword(String.format("%s processed for order %d (Transaction ID: %s)",
                 result.getTransactionType(), result.getOrderId(), result.getTransactionId()));
         auditLog.setRole(UserRole.CUSTOMER);
         auditLog.setTimestamp(LocalDateTime.now());
